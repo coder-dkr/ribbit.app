@@ -1,3 +1,3 @@
-import { NavItems } from "./Navitems"
+import { NavItems } from "./NavItems"
 
 export default NavItems
