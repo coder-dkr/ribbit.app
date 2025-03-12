@@ -1,10 +1,11 @@
 
-
-
 export default function Home() {
-  return (
-    <p>
-        hi
-    </p>
+ 
+ return (  
+    <div>
+      <h1>Capture an Image</h1>
+    </div>
+
+  
   );
 }
