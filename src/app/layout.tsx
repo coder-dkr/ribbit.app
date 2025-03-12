@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/contexts/AuthContext";
+import PostContextProvider from "@/contexts/PostContext";
+import Header from "@/components/Header";
+import Navbar from "@/components/Navbar/Navbar";
+import PostModal from "@/components/Post/PostModal/PostModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,12 +30,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
+        <PostContextProvider>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Header />
+        <PostModal />
+        <div className="w-full flex items-start">
+          <aside className="fixed left-0 w-64 border-r border-r-gray-800 px-5 py-8">
+            <Navbar />
+          </aside>
+          <main className="md:ml-64 flex-1 px-5 py-3">
+          {children}
+          </main>
+        </div>
       </body>
+      </PostContextProvider>
       </AuthProvider>
     </html>
   );

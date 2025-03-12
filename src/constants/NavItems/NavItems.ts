@@ -1,17 +1,11 @@
-import { IconType } from "react-icons";
 import { IoHomeOutline , IoHomeSharp } from "react-icons/io5";
 import { IoMdNotificationsOutline , IoMdNotifications } from "react-icons/io"
 import { HiOutlineUsers , HiUsers} from "react-icons/hi2";
 import { MdChatBubbleOutline , MdChat} from "react-icons/md";
 import { FaRegUser, FaUser } from "react-icons/fa";
+import { NavItemType } from "@/types/NavItemType";
 
 
-type NavItemType = {
-    name: string,
-    route: string,
-    icon: IconType,
-    activeIcon? : IconType
-}
 
 const  NavItems : NavItemType[] = [
     {
@@ -22,7 +16,7 @@ const  NavItems : NavItemType[] = [
     },
     {
         name : "Notifications",
-        route : "/notfictions",
+        route : "/notifications",
         icon : IoMdNotificationsOutline,
         activeIcon : IoMdNotifications
     },

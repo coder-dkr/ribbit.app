@@ -1,50 +1,69 @@
 "use client";
 import { useAuth } from "@/hooks";
 import Image from "next/image";
+import ButtonShimmer from "@/components/ui/Button-shimmer";
+import ButtonMagic from "@/components/ui/Button-magicB";
+import { useState } from "react";
 
 export default function SignUser() {
-  const { user, handleSignInWithOAuth, signOut } = useAuth();
-  // console.log(user);
+  const [copied , setCopied] = useState(false)
+  const { user, handleSignInWithOAuth ,signOut } = useAuth();
+  console.log(user);
+
+  const shareProfileLink = async () => {
+    const link = `${window.origin}/${user?.user_metadata.preferred_username}`
+    await navigator.clipboard.writeText(link);
+    setCopied(true)
+    setTimeout(() => {
+    setCopied(false)
+    },1000)
+  }
+
   return (
     <>
       {user ? (
-        <div className="flex items-center gap-3">
-          {user.user_metadata.avatar_url && (
-            <Image
-              width={35}
-              height={35}
-              src={user.user_metadata.avatar_url}
-              alt="user avatar"
-              className="rounded-full"
+        <div className="relative flex items-center gap-3 group">
+          <div className="flex items-center gap-3 cursor-pointer">
+            {user.user_metadata.avatar_url && (
+              <Image
+                width={40}
+                height={40}
+                src={user.user_metadata.avatar_url}
+                alt="user avatar"
+                className="rounded-full border border-slate-800"
+              />
+            )}
+          </div>
+          <div className="absolute top-full right-0 hidden group-hover:flex flex-col justify-center border bg-black border-gray-800 gap-3 p-3 rounded-2xl">
+            <div className="absolute inset-0 m-3 bg-white blur-sm -z-[1]" />
+            <ButtonShimmer
+              onClick={shareProfileLink}
+              content={copied ? "Copied ✌️" :"Share profile ➤"}
             />
-          )}
-          <button
-            onClick={signOut}
-            className="inline-flex h-9 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none"
-          >
-            Sign Out
-          </button>
+            <ButtonShimmer
+              onClick={signOut}
+              content={`Sign out  @${user.user_metadata.preferred_username}`}
+            />
+          </div>
         </div>
       ) : (
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => handleSignInWithOAuth("github")}
-            className="inline-flex h-9 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none active:scale-105 duration-150"
-          >
-            Sign Up with github
-          </button>
-          <button
-            onClick={() => handleSignInWithOAuth("google")}
-            className="inline-flex h-9 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none active:scale-105 duration-150"
-          >
-            Sign Up with Google
-          </button>
-          <button
-            onClick={() => handleSignInWithOAuth("twitter")}
-            className="inline-flex h-9 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none active:scale-105 duration-150"
-          >
-            Sign Up with Twitter
-          </button>
+        <div className="relative group">
+          <ButtonMagic content="Sign Up" />
+          <div className="absolute top-full right-0 hidden group-hover:flex flex-col justify-center border bg-black border-gray-800 gap-3 p-3 rounded-2xl">
+          <div className="absolute inset-0 m-3 bg-white blur-sm -z-[1]" />
+            <ButtonShimmer
+              onClick={() => handleSignInWithOAuth("github")}
+              content="Sign Up with github"
+            />
+            <ButtonShimmer
+              onClick={() => handleSignInWithOAuth("google")}
+              content="Sign Up with Google"
+            />
+            <ButtonShimmer
+              onClick={() => handleSignInWithOAuth("twitter")}
+              content="Sign Up with X"
+            />
+          </div>
         </div>
       )}
     </>
