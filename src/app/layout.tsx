@@ -3,9 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/contexts/AuthContext";
 import PostContextProvider from "@/contexts/PostContext";
+import CameraProvider from "@/contexts/CameraContext";
 import Header from "@/components/Header";
 import Navbar from "@/components/Navbar/Navbar";
 import PostModal from "@/components/Post/PostModal/PostModal";
+import QueryProvider from "@/lib/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +21,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Ribbit",
-  description: "Ribbit is a Social Media web application where People can make posts , follow communities and Chat in Realtime.",
+  description:
+    "Ribbit is a Social Media web application where People can make posts , follow communities and Chat in Realtime.",
 };
 
 export default function RootLayout({
@@ -29,25 +32,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <AuthProvider>
-        <PostContextProvider>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
-        <PostModal />
-        <div className="w-full flex items-start">
-          <aside className="fixed left-0 w-64 border-r border-r-gray-800 px-5 py-8">
-            <Navbar />
-          </aside>
-          <main className="md:ml-64 flex-1 px-5 py-3">
-          {children}
-          </main>
-        </div>
+        <QueryProvider>
+        <AuthProvider>
+          <CameraProvider>
+            <PostContextProvider>
+              <Header />
+              <PostModal />
+              <div className="w-full flex items-start">
+                <aside className="fixed left-0 w-64 border-r border-r-gray-800 px-5 py-8">
+                  <Navbar />
+                </aside>
+                <main className="md:ml-64 flex-1 px-5 py-3">{children}</main>
+              </div>
+            </PostContextProvider>
+          </CameraProvider>
+        </AuthProvider>
+        </QueryProvider>
       </body>
-      </PostContextProvider>
-      </AuthProvider>
     </html>
   );
 }

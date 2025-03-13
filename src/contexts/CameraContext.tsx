@@ -78,6 +78,7 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error("Camera initialization failed:", err);
       setError(err instanceof Error ? err.message : "Failed to access camera.");
+      // setTimeout(() => setError(null),1200)
       stopCamera();
     }
   };
@@ -134,6 +135,10 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error("Capture failed:", err);
       setError(err instanceof Error ? err.message : "Failed to capture image.");
+      // setTimeout(() => setError(null),1200)
+    }
+    finally {
+      stopCamera()
     }
   };
 
@@ -170,8 +175,12 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
         </div>
       )}
 
-      {isCameraOn && (
-        <div className="z-[999]">
+      {/* {isCameraOn && ( */}
+        <div  
+        style={{
+          display: isCameraOn ? "block" : "none", 
+        }}
+        className="z-[999] relative">
           <video
             ref={videoRef}
             autoPlay
@@ -182,13 +191,21 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
               height: "auto",
               border: "2px solid #ddd",
               borderRadius: "8px",
-              transform: "scaleX(-1)", // Mirror the video feed
-              display: isCameraOn ? "block" : "none", // Hide when camera is off
+              transform: "scaleX(-1)",
+              display: isCameraOn ? "block" : "none", 
             }}
           />
+          <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3">
+          <button onClick={stopCamera} className=" px-4 py-2 border-0 outline-0 rounded-full bg-red-500 text-xl">
+            Stop
+          </button>
+          <button onClick={captureImage} className=" px-4 py-2 border-0 outline-0 rounded-full bg-blue-500 text-xl">
+            Capture
+          </button>
+          </div>
           <canvas ref={canvasRef} style={{ display: "none" }} />
         </div>
-      )}
+      {/* )} */}
       {children}
     </CameraContext.Provider>
   );
