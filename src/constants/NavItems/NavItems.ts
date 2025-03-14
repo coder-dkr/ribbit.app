@@ -10,7 +10,7 @@ import { NavItemType } from "@/types/NavItemType";
 const  NavItems : NavItemType[] = [
     {
         name : "Home",
-        route : "/",
+        route : "/home",
         icon : IoHomeOutline,
         activeIcon : IoHomeSharp
     },

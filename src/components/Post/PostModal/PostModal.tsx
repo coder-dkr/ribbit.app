@@ -15,28 +15,25 @@ import { useMutation } from "@tanstack/react-query";
 
 const createPost = async (post: PostType) => {
   let newPost = post
-  if (post.image_url !== null && typeof post.image_url !== "string"
-  ) {
-    console.log('1')
-    const filepath = `ribbit-${Date.now()}-${post.image_url?.name}}`;
+  if (post.upLoadFile) {
+    
+    const filepath = `ribbit-${Date.now()}-${post.upLoadFile?.name}`;
 
     const { error: uploadError } = await supabase.storage
-      .from("post_images")
-      .upload(filepath, post.image_url!);
+      .from("post-images")
+      .upload(filepath, post.upLoadFile!);
 
-    if (uploadError) throw new Error(uploadError.message);
-
-    console.log('2')
+    if (uploadError) throw new Error(`ERROR UPLOADING FILE 111 ${uploadError.message}`);
+    
     const { data: publicDataUrl } = await supabase.storage
-      .from("post_images")
+      .from("post-images")
       .getPublicUrl(filepath);
-      newPost = { ...post, image_url: publicDataUrl.publicUrl };
-      console.log('3',newPost)
+      newPost = { ...post, image_url: publicDataUrl.publicUrl as string};
   }
 
-  const { data, error } = await supabase.from("posts").insert(newPost);
+  const { data, error } = await supabase.from("posts").insert([newPost]);
   if (error) throw new Error(error.message);
-  console.log('4',data)
+  
   return data;
 };
 
@@ -49,7 +46,7 @@ const PostModal = () => {
   const textareaRef = useRef(null);
   const inputImageRef = useRef<HTMLInputElement>(null);
 
-  const { startCamera, image_data_url: imgCaptureSrc } = useCamera();
+  const { startCamera, image_data_url: imgCaptureSrc , capturedFile} = useCamera();
 
   useEffect(() => {
     if (isModalOpen) {
@@ -95,12 +92,13 @@ const PostModal = () => {
 
   useEffect(() => {
     if (imgCaptureSrc) {
+      setSelectedFile(capturedFile)
       setImagePreview(imgCaptureSrc);
       if (textareaRef.current) {
         (textareaRef.current as HTMLTextAreaElement).focus();
       }
     }
-  }, [imgCaptureSrc]);
+  }, [imgCaptureSrc,capturedFile]);
 
   const handleStartCamera = () => {
     setOpenEmojiPicker(false);
@@ -112,12 +110,11 @@ const PostModal = () => {
   const handleCreatePost = (e: React.FormEvent) => {
     e.preventDefault();
     if (text === "") {
-      console.log("cannot proceed");
       return;
     }
     const newPost: PostType = {
       content: text,
-      image_url: selectedFile,
+      upLoadFile: selectedFile,
       user_id: user!.id,
     };
     mutate(newPost);

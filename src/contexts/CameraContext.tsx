@@ -3,6 +3,7 @@ import { useRef, useState, useEffect, createContext } from "react";
 
 interface CameraCaptureProps {
   image_data_url: string | null;
+  capturedFile: File | null;
   stopCamera?: () => void;
   captureImage: () => void;
   startCamera: () => void;
@@ -10,6 +11,7 @@ interface CameraCaptureProps {
 
 export const CameraContext = createContext<CameraCaptureProps>({
   image_data_url: null,
+  capturedFile:  null,
   stopCamera: () => {},
   captureImage: () => {},
   startCamera: () => {},
@@ -22,10 +24,11 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
+  const [capturedFile, setCapturedFile] = useState<File | null>(null);
 
   // Start Camera Function
   const startCamera = async () => {
-    console.log("Starting camera...");
+
     try {
       setError(null);
 
@@ -43,6 +46,7 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Get media stream
       const mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio : false,
         video: {
           width: { ideal: 1280 },
           height: { ideal: 720 },
@@ -74,11 +78,10 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
 
       setStream(mediaStream);
       setIsCameraOn(true);
-      console.log("Camera started successfully.");
     } catch (err) {
       console.error("Camera initialization failed:", err);
       setError(err instanceof Error ? err.message : "Failed to access camera.");
-      // setTimeout(() => setError(null),1200)
+      setTimeout(() => setError(null),1200)
       stopCamera();
     }
   };
@@ -93,7 +96,6 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
       videoRef.current.srcObject = null;
     }
     setIsCameraOn(false);
-    console.log("Camera stopped.");
   };
 
   // Capture Image Function with Flip
@@ -123,19 +125,21 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
       // Draw video frame onto canvas (resized)
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Reset the transformation matrix
       context.setTransform(1, 0, 0, 1, 0, 0);
-
-      // Convert canvas to image with reduced quality
-      const imageDataUrl = canvas.toDataURL("image/jpeg", 0.7); // 0.7 = 70% quality
-
+      
+      const imageDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], "captured_image.jpg", { type: "image/jpeg" });
+          setCapturedFile(file); 
+        }
+      }, "image/jpeg", 0.7);
       setImageSrc(imageDataUrl);
-
-      console.log("Image captured and compressed successfully.");
+      
     } catch (err) {
       console.error("Capture failed:", err);
       setError(err instanceof Error ? err.message : "Failed to capture image.");
-      // setTimeout(() => setError(null),1200)
+      setTimeout(() => setError(null),1200)
     }
     finally {
       stopCamera()
@@ -154,6 +158,7 @@ const CameraProvider = ({ children }: { children: React.ReactNode }) => {
   // Context value
   const contextValue = {
     image_data_url: imageSrc,
+    capturedFile : capturedFile,
     stopCamera : stopCamera,
     startCamera : startCamera,
     captureImage : captureImage,

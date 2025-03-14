@@ -1,7 +1,9 @@
 type PostType = {
     content : string,
-    image_url? : File | string | null,
+    upLoadFile? : File | null;
+    image_url? : string | null,
     user_id : string,
 }
+
 
 export default PostType

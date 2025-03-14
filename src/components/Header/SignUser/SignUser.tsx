@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function SignUser() {
   const [copied , setCopied] = useState(false)
   const { user, handleSignInWithOAuth ,signOut } = useAuth();
-  console.log(user);
+
 
   const shareProfileLink = async () => {
     const link = `${window.origin}/${user?.user_metadata.preferred_username}`

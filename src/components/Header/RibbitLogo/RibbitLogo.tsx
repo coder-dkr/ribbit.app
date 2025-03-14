@@ -49,7 +49,7 @@ const RibbitLogo = () => {
       // style={{ textShadow: "0px 0px 10px #00FF00" }}
     >
       {"Ribbit".split("").map((letter, index) => (
-        <motion.span key={index} variants={letterVariants}>
+        <motion.span key={index} variants={letterVariants} className="font-mono">
           {letter}
         </motion.span>
       ))}
