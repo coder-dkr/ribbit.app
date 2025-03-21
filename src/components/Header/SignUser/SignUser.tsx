@@ -11,7 +11,7 @@ export default function SignUser() {
 
 
   const shareProfileLink = async () => {
-    const link = `${window.origin}/${user?.user_metadata.preferred_username}`
+    const link = `${window.origin}/${user?.user_metadata.user_name}`
     await navigator.clipboard.writeText(link);
     setCopied(true)
     setTimeout(() => {
@@ -42,7 +42,7 @@ export default function SignUser() {
             />
             <ButtonShimmer
               onClick={signOut}
-              content={`Sign out  @${user.user_metadata.preferred_username}`}
+              content={`Sign out  @${user.user_metadata.user_name}`}
             />
           </div>
         </div>

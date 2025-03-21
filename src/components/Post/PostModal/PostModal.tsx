@@ -11,7 +11,7 @@ import { useCamera } from "@/hooks/useCamera";
 import EmojiPicker, { Theme, EmojiStyle } from "emoji-picker-react";
 import PostType from "@/types/PostType";
 import supabase from "@/supabase/supabase-client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation , useQueryClient} from "@tanstack/react-query";
 
 const createPost = async (post: PostType) => {
   let newPost = post
@@ -30,7 +30,7 @@ const createPost = async (post: PostType) => {
       .getPublicUrl(filepath);
       newPost = { ...post, image_url: publicDataUrl.publicUrl as string};
   }
-
+  delete newPost.upLoadFile //super important to delete the upLoadfile
   const { data, error } = await supabase.from("posts").insert([newPost]);
   if (error) throw new Error(error.message);
   
@@ -105,7 +105,10 @@ const PostModal = () => {
     startCamera();
   };
 
-  const { mutate } = useMutation({ mutationFn: createPost });
+  const queryClient = useQueryClient()
+  const { mutate } = useMutation({ mutationFn: createPost ,  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["postslist"] }); 
+  }, });
 
   const handleCreatePost = (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,7 +137,11 @@ const PostModal = () => {
             }}
             className="absolute inset-0 z-50 bg-gray-700 opacity-50"
           ></div>
-          <section className="absolute w-xl left-1/2 top-20 -translate-x-1/2 bg-black border border-gray-900 px-6 py-4 rounded-lg z-[99] flex flex-col gap-2">
+          <section 
+          style={{
+            maxHeight: "calc(100vh - 7rem)", 
+          }}
+          className="absolute w-xl left-1/2 top-20 -translate-x-1/2 bg-black border border-gray-900 px-6 py-4 rounded-lg z-[99] flex flex-col gap-2">
             <button
               onClick={handleCloseModal}
               className="absolute right-3 top-3 p-2 hover:bg-white/20 rounded-full text-xl cursor-pointer"
@@ -161,19 +168,21 @@ const PostModal = () => {
                 <option value="cat">communities</option>
               </select>
             </span>
-            <div className="ml-2 border-b border-gray-800">
+            <div 
+            style={{ overflowY: "auto", }}
+            className="ml-2 border-b border-gray-800">
               <textarea
                 autoFocus
                 ref={textareaRef}
                 value={text}
                 onChange={handleInput}
-                rows={4}
+                rows={1}
                 placeholder="What's happening.."
                 className="w-full text-xl outline-0 p-3 resize-none overflow-hidden"
                 style={{ minHeight: "40px" }}
               />
               {imagePreview && (
-                <div className="mt-2 relative">
+                <div className="mt- relative">
                   <Image
                     layout="responsive"
                     width={800}
@@ -184,7 +193,7 @@ const PostModal = () => {
                   />
                   <button
                     onClick={handleClearPreview}
-                    className="absolute -right-2 -top-2 p-2 bg-gray-800 rounded-full text-xl cursor-pointer"
+                    className="absolute -right-2 -top-2 p-2 bg-gray-800 rounded-full text-xl cursor-pointer z-[100]"
                   >
                     <IoMdClose />
                   </button>

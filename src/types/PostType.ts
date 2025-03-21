@@ -3,6 +3,8 @@ type PostType = {
     upLoadFile? : File | null;
     image_url? : string | null,
     user_id : string,
+    created_at? : Date,
+    id?: number
 }
 
 
