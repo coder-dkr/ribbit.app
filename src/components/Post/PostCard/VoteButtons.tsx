@@ -46,7 +46,7 @@ const updateVotes = async ({
         const { error } = await supabase
           .from("votes")
           .delete()
-          .eq("user_id", userId);
+          .eq("id", existingVote.id);
         if (error) {
           console.error(error);
           return;
@@ -78,7 +78,7 @@ export default function VoteButtons({
   postId,
 }: {
   postId: number;
-  userId: string;
+  userId: string | undefined;
 }) {
 
   const queryclient = useQueryClient();
@@ -104,7 +104,13 @@ export default function VoteButtons({
     <div className="flex items-center text-2xl gap-3">
       <button
         className={`flex items-center gap-1`}
-        onClick={() => mutate({ userId, postId, vote: 1 })}
+        onClick={() => {
+          if(!userId){
+            alert("you are not logged in!")
+            return
+          } 
+          mutate({ userId, postId, vote: 1 })}
+        }
       >
         {userVote === 1 ? <AiFillLike /> : <AiOutlineLike />}
         <span className="text-base">{likes}</span>
@@ -112,7 +118,13 @@ export default function VoteButtons({
 
       <button
         className={`flex items-center gap-1`}
-        onClick={() => mutate({ userId, postId, vote: -1 })}
+        onClick={() => {
+          if(!userId){
+            alert("you are not logged in!")
+            return
+          } 
+          mutate({ userId, postId, vote: -1 })}
+        }
       >
         {userVote === -1 ? <AiFillDislike /> : <AiOutlineDislike />}
         <span className="text-base">{dislikes}</span>

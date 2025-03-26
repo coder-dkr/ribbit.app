@@ -7,7 +7,7 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import VoteButtons from "./VoteButtons";
-
+import { useAuth } from "@/hooks";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -18,7 +18,9 @@ const PostCard = ({
   post: PostType;
   author: ProfileType | null;
 }) => {
-  const { content, image_url, created_at , user_id } = post;
+  const { content, image_url, created_at } = post;
+
+  const {user} = useAuth()
 
   if (!author) return <p>Author not Found</p>;
   return (
@@ -53,7 +55,7 @@ const PostCard = ({
           />
         )}
        <div className="mt-3.5">
-        <VoteButtons userId={user_id} postId={post.id!} />
+        <VoteButtons userId={user?.id} postId={post.id!} />
       </div>
       </div>
     </div>
