@@ -1,5 +1,5 @@
 import PostType from "@/types/PostType";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import ProfileType from "@/types/ProfileType";
 import ReactTimeAgo from "react-time-ago";
@@ -8,6 +8,11 @@ import en from "javascript-time-ago/locale/en.json";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import VoteButtons from "./VoteButtons";
 import { useAuth } from "@/hooks";
+import { FaRegComment } from "react-icons/fa";
+import { FaRegBookmark } from "react-icons/fa";
+import { FaBookmark } from "react-icons/fa6";
+import Link from "next/link";
+
 
 TimeAgo.addDefaultLocale(en);
 
@@ -21,6 +26,8 @@ const PostCard = ({
   const { content, image_url, created_at } = post;
 
   const {user} = useAuth()
+
+  const [isSavedByUser, seiIsSavedByUser] = useState(false)
 
   if (!author) return <p>Author not Found</p>;
   return (
@@ -54,8 +61,22 @@ const PostCard = ({
             className="rounded-xl mt-3"
           />
         )}
-       <div className="mt-3.5">
+       <div className="mt-3.5 flex items-center justify-between ">
+        <div className="flex items-center gap-3.5">
         <VoteButtons userId={user?.id} postId={post.id!} />
+        <Link
+        href={`/post/${post.id}`}
+        className="text-xl">
+          <FaRegComment />
+        </Link>
+        </div>
+
+        <button 
+        onClick={()=>seiIsSavedByUser(p => !p)}
+        className="text-xl">
+         {isSavedByUser ? <FaBookmark /> : <FaRegBookmark />}
+        </button>
+
       </div>
       </div>
     </div>

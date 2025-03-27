@@ -101,7 +101,7 @@ export default function VoteButtons({
   const userVote =   allVotes?.find((vote) => vote.user_id === userId)?.vote
 
   return (
-    <div className="flex items-center text-2xl gap-3">
+    <div className="flex items-center text-xl gap-3">
       <button
         className={`flex items-center gap-1`}
         onClick={() => {
