@@ -44,8 +44,8 @@ const Page = () => {
     if (!post) return <p>Loading...</p>;
 
   return (
-    <div className="max-w-lg border border-gray-700 px-5 py-4 ">
-    <div className="flex justify-between items-center">
+    <>
+    <div className="flex justify-between items-center w-full">
       <div className="flex items-center gap-2 text-base">
         <Image
           width={40}
@@ -91,7 +91,7 @@ const Page = () => {
 
     </div>
     </div>
-  </div>
+  </>
   )
 }
 
