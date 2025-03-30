@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import supabase from "@/supabase/supabase-client";
 
 const fetchAuthor = async (user_id: string): Promise<ProfileType | null> => {
-  console.log("author")
   const { data, error } = await supabase
   .from('profiles') 
   .select()

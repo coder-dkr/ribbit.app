@@ -57,7 +57,6 @@ const updateVotes = async ({
           .from("votes")
           .update({ vote })
           .eq("id", existingVote.id);
-        console.log(vote)
         if (error) {
           console.error(error);
           return;
