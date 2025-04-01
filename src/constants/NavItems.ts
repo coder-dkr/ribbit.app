@@ -2,7 +2,6 @@ import { IoHomeOutline , IoHomeSharp } from "react-icons/io5";
 import { IoMdNotificationsOutline , IoMdNotifications } from "react-icons/io"
 import { HiOutlineUsers , HiUsers} from "react-icons/hi2";
 import { MdChatBubbleOutline , MdChat} from "react-icons/md";
-import { FaRegUser, FaUser } from "react-icons/fa";
 import { NavItemType } from "@/types/NavItemType";
 
 
@@ -31,12 +30,6 @@ const  NavItems : NavItemType[] = [
         route : "/messages",
         icon : MdChatBubbleOutline,
         activeIcon: MdChat
-    },
-    {
-        name : "Profile",
-        route : "/profile",
-        icon : FaRegUser,
-        activeIcon: FaUser
     },
 
 ]

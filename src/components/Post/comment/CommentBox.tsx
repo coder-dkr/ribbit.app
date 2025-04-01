@@ -5,13 +5,6 @@ import supabase from '@/supabase/supabase-client'
 import CommentType from '@/types/CommentType'
 import { useAuth } from '@/hooks'
 
-export type Comment = {
-    comment : string,
-    post_id : number,
-    user_id : string | undefined,
-    author_username : string,
-    author_pfp : string,
-}
 
 const fetchComments =  async (postId : number) => {
     const {data , error } = await supabase.from("comments").select('*').eq("post_id", postId).order("created_at", { ascending: false })
@@ -20,32 +13,36 @@ const fetchComments =  async (postId : number) => {
     return data  as CommentType[]
 }
 
-const postComment = async (comment : Comment ) => {
+const postComment = async (comment : CommentType ) => {
     const {error} = await supabase.from("comments").insert(comment)
     if(error)  throw new Error(error.message)
 }
 
 const flatcomments = (comments: CommentType[]) => {
-    if(!comments) return []
-    const commentMap = new Map<number, CommentType & { replies: CommentType[] }>()
+    if (!comments) return [];
+
+    const commentMap = new Map<number, CommentType>();
 
     comments.forEach((comment) => {
-        commentMap.set(comment.id!, {...comment, replies: []})
-    })
+        commentMap.set(comment.id!, { ...comment, replies: [] });
+    });
+
+    const result: CommentType[] = [];
 
     comments.forEach((comment) => {
-        if(comment.parent_id !== null){
-            const parentComment = commentMap.get(comment.parent_id!)
-            if(parentComment){
-                parentComment.replies.push({...comment, replies: []})
-                commentMap.delete(comment.id!) 
+        if (comment.parent_id !== null) {
+            const parentComment = commentMap.get(comment.parent_id!);
+            if (parentComment) {
+                parentComment.replies?.push(commentMap.get(comment.id!)!);
             }
+        } else {
+            result.push(commentMap.get(comment.id!)!);
         }
-       
-    })
+    });
+    commentMap.clear();
+    return result;
+};
 
-    return Array.from(commentMap.values())
-}
 
 const CommentBox = ({postId} : {postId : number}) => {
 
@@ -67,10 +64,10 @@ const CommentBox = ({postId} : {postId : number}) => {
     if(comment.length === 0) {
         alert("comment cannot be empty!")
     }
-    const newComment : Comment = {
+    const newComment : CommentType = {
         comment : comment,
         post_id : postId,
-        user_id : user?.id,
+        user_id : user?.id ?? '',
         author_username : user?.user_metadata.user_name,
         author_pfp : user?.user_metadata.avatar_url,
     }

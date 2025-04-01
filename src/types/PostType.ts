@@ -4,7 +4,8 @@ type PostType = {
     image_url? : string | null,
     user_id : string,
     created_at? : Date,
-    id?: number
+    id?: number,
+    comment_count? : []
 }
 
 

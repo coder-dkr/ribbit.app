@@ -6,7 +6,13 @@ import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 
 const fetchPosts = async () => {
-  const {data,error} = await supabase.from("posts").select().order("created_at", { ascending: false })
+  const {data,error} = await supabase .from('posts')
+  .select(`
+    *,
+    comment_count: comments!post_id(count)
+  `)
+  .order('created_at', { ascending: false })
+  .filter('comments.parent_id', 'is', null);
   if(error) throw new Error(error.message)
   return data
 }
@@ -16,7 +22,7 @@ const Page = () => {
 
   if(error) throw new Error(error.message)
   if(isLoading) return <p>lOADIN</p>  
-
+  console.log(posts)
   return (
     <div>
       {posts && posts.length > 0 ? (

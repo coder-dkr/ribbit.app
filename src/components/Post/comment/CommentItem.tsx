@@ -9,12 +9,11 @@ import { IoChevronDown } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks";
-import { type Comment } from "./CommentBox";
 import supabase from "@/supabase/supabase-client";
 
 TimeAgo.addDefaultLocale(en);
 
-type ReplyType = Comment & { parent_id: number | undefined };
+type ReplyType = CommentType;
 
 const postReply = async (reply: ReplyType) => {
   const { error } = await supabase.from("comments").insert(reply);
@@ -47,7 +46,7 @@ const CommentItem = ({ comment }: { comment: CommentType }) => {
     const newReply: ReplyType = {
       comment: replyComment,
       post_id: comment.post_id,
-      user_id: user?.id,
+      user_id: user?.id ?? '',
       author_username: user?.user_metadata.user_name,
       author_pfp: user?.user_metadata.avatar_url,
       parent_id: comment.id,
@@ -78,7 +77,7 @@ const CommentItem = ({ comment }: { comment: CommentType }) => {
       </div>
 
       <p className="font-sans ml-10">{comment.comment}</p>
-      <div className="ml-10 mt-2 flex items-center gap-5">
+      <div className="ml-10 mt-2 flex items-center gap-5 text-sm">
         <button
           onClick={() => setTypeReply((r) => !r)}
           className="flex items-center gap-1 text-green-500"
@@ -94,13 +93,13 @@ const CommentItem = ({ comment }: { comment: CommentType }) => {
             </>
           )}
         </button>
-        <button
+        {comment.replies && comment.replies.length > 0 && <button
           onClick={() => setShowreplies((p) => !p)}
           className="flex items-center gap-1 text-green-500"
         >
-          <span>{showreplies ? "hide replies" : "show replies"}</span>
+          <span>{showreplies ? "hide replies" : `show replies (${comment.replies.length})`}</span>
           <IoChevronDown className={`${showreplies ? "rotate-180" : ""}`} />
-        </button>
+        </button>}
       </div>
 
       {typeReply && (

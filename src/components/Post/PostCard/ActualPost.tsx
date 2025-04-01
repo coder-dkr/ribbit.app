@@ -20,10 +20,11 @@ const PostCard = ({
   post,
   author,
 }: {
-  post: PostType;
+  post: PostType & {comment_count:[]};
   author: ProfileType | null;
 }) => {
   const { content, image_url, created_at } = post;
+  const comment_count = (post.comment_count as { count: number }[])[0]?.count ?? 0;
 
   const {user} = useAuth()
 
@@ -66,8 +67,8 @@ const PostCard = ({
         <VoteButtons userId={user?.id} postId={post.id!} />
         <Link
         href={`/post/${post.id}`}
-        className="text-xl">
-          <FaRegComment />
+        className="text-xl flex items-center gap-1.5">
+          <FaRegComment /> <span className="text-base">{comment_count}</span>
         </Link>
         </div>
 

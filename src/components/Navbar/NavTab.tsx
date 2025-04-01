@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 
+
 const NavTab = ({ item }: { item: NavItemType }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isPending , startTransition] = useTransition()
-
   function handleNavigation () {
     startTransition(() => {
         router.push(item.route)

@@ -16,12 +16,17 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import CommentBox from "@/components/Post/comment/CommentBox";
 
-TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(en);
 
 const fetchPost = async (id: number) => {
   const { data, error } = await supabase
     .from("posts")
-    .select()
+    .select(`
+      *,
+      comment_count: comments!post_id(count)
+    `)
+    .order('created_at', { ascending: false })
+    .filter('comments.parent_id', 'is', null)
     .eq("id", id)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -52,6 +57,7 @@ const Page = () => {
 
   if (!post) return <p>Loading...</p>;
 
+  const comment_count = (post.comment_count as { count: number }[])[0]?.count ?? 0;
   return (
     <section className="max-w-6xl mx-auto p-6">
       <div className="flex justify-between items-center w-full">
@@ -82,8 +88,8 @@ const Page = () => {
 
         {post?.image_url && (
           <Image
-            width={900}
-            height={1100}
+            width={700}
+            height={900}
             src={post.image_url}
             alt="post image"
             className="rounded-xl mt-3"
@@ -92,9 +98,10 @@ const Page = () => {
         <div className="mt-5 flex items-center justify-between ">
           <div className="flex items-center gap-3.5">
             <VoteButtons userId={user?.id} postId={post?.id} />
-            <button className="text-xl">
-              <FaRegComment />
-            </button>
+            <button
+        className="text-xl flex items-center gap-1.5">
+          <FaRegComment /> <span className="text-base">{comment_count}</span>
+        </button>
           </div>
 
           <button
