@@ -30,6 +30,10 @@ const PostCard = ({
 
   const [isSavedByUser, seiIsSavedByUser] = useState(false)
 
+  const handlePostSave = () => {
+   seiIsSavedByUser(p => !p)
+  }
+
   if (!author) return <p>Author not Found</p>;
   return (
     <div className="max-w-lg border border-gray-700 px-5 py-4 ">
@@ -73,7 +77,7 @@ const PostCard = ({
         </div>
 
         <button 
-        onClick={()=>seiIsSavedByUser(p => !p)}
+        onClick={handlePostSave}
         className="text-xl">
          {isSavedByUser ? <FaBookmark /> : <FaRegBookmark />}
         </button>
